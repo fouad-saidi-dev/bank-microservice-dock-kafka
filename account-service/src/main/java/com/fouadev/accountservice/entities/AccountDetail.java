@@ -5,6 +5,8 @@ import com.fouadev.accountservice.model.Customer;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 /*
  Created by : Fouad SAIDI on 24/01/2025
  @author : Fouad SAIDI
@@ -19,6 +21,7 @@ import lombok.*;
 @Builder
 public class AccountDetail {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String accountNumber;
     @Enumerated(value = EnumType.STRING)
@@ -27,4 +30,6 @@ public class AccountDetail {
     @Transient
     private Customer customer;
     private Long customerId;
+    @OneToMany(mappedBy = "accountDetail")
+    private List<Transaction> transactions;
 }

@@ -1,9 +1,14 @@
 package com.fouadev.accountservice.mapper;
 
 import com.fouadev.accountservice.dto.AccountDetailDTO;
+import com.fouadev.accountservice.dto.TransactionDTO;
+import com.fouadev.accountservice.dto.TransactionResponseDTO;
 import com.fouadev.accountservice.entities.AccountDetail;
+import com.fouadev.accountservice.entities.Transaction;
 import com.fouadev.accountservice.repositories.AccountDetailRepo;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 /*
  Created by : Fouad SAIDI on 24/01/2025
@@ -13,11 +18,7 @@ import org.springframework.stereotype.Component;
 */
 @Component
 public class AccountDetailMapper {
-    private AccountDetailRepo accountDetailRepo;
 
-    public AccountDetailMapper(AccountDetailRepo accountDetailRepo) {
-        this.accountDetailRepo = accountDetailRepo;
-    }
 
     public AccountDetailDTO toAccountDetailDTO(AccountDetail accountDetail) {
         return AccountDetailDTO.builder()
@@ -26,6 +27,11 @@ public class AccountDetailMapper {
                 .accountType(accountDetail.getAccountType())
                 .balance(accountDetail.getBalance())
                 .customerId(accountDetail.getCustomerId())
+                .customer(accountDetail.getCustomer())
+                .transactions(accountDetail.getTransactions() != null
+                        ? accountDetail.getTransactions().stream()
+                        .map(this::toTransactionRespDTO)
+                        .toList() : null)
                 .build();
     }
 
@@ -36,6 +42,37 @@ public class AccountDetailMapper {
                 .accountType(accountDetailDTO.getAccountType())
                 .balance(accountDetailDTO.getBalance())
                 .customerId(accountDetailDTO.getCustomerId())
+                .customer(accountDetailDTO.getCustomer())
+                //.transactions(accountDetailDTO.getTransactions())
+                .build();
+    }
+
+    public Transaction toTransaction(TransactionDTO transactionDTO) {
+        return Transaction.builder()
+                .id(transactionDTO.getId())
+                .amount(transactionDTO.getAmount())
+                .transactionType(transactionDTO.getTransactionType())
+                .transactionDate(transactionDTO.getTransactionDate())
+                //.accountDetail(transactionDTO.getAccountDetail())
+                .build();
+    }
+
+    public TransactionDTO toTransactionDTO(Transaction transaction) {
+        return TransactionDTO.builder()
+                .id(transaction.getId())
+                .amount(transaction.getAmount())
+                .transactionType(transaction.getTransactionType())
+                .transactionDate(transaction.getTransactionDate())
+                //.accountDetail(transaction.getAccountDetail())
+                .build();
+    }
+
+    public TransactionResponseDTO toTransactionRespDTO(Transaction transaction) {
+        return TransactionResponseDTO.builder()
+                .id(transaction.getId())
+                .amount(transaction.getAmount())
+                .transactionType(transaction.getTransactionType())
+                .transactionDate(LocalDateTime.now())
                 .build();
     }
 

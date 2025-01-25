@@ -26,7 +26,7 @@ public interface CustomerRestClient {
         customer.setEmail("Not Vailable");
         return customer;
     }
-    default List<Customer> getAllCustomers(Exception exception){
+    default List<Customer> getDefaultCustomers(Exception exception){
         return List.of();
     }
 }

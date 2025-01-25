@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -23,5 +25,6 @@ public class AccountDetailDTO {
     private Double balance;
     private Customer customer;
     private Long customerId;
+    private List<TransactionResponseDTO> transactions;
 
 }
