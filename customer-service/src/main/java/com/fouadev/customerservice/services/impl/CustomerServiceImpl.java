@@ -5,6 +5,7 @@ import com.fouadev.customerservice.entities.Customer;
 import com.fouadev.customerservice.mapper.CustomerMapper;
 import com.fouadev.customerservice.repositories.CustomerRepository;
 import com.fouadev.customerservice.services.CustomerService;
+import com.fouadev.customerservice.services.KafkaProducerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +17,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     private CustomerMapper customerMapper;
     private CustomerRepository customerRepository;
+    private KafkaProducerService kafkaProducerService;
 
-    public CustomerServiceImpl(CustomerMapper customerMapper, CustomerRepository customerRepository) {
+    public CustomerServiceImpl(CustomerMapper customerMapper, CustomerRepository customerRepository, KafkaProducerService kafkaProducerService) {
         this.customerMapper = customerMapper;
         this.customerRepository = customerRepository;
+        this.kafkaProducerService = kafkaProducerService;
     }
     @Override
     public CustomerDTO addCustomer(CustomerDTO customerDTO) {
@@ -27,6 +30,7 @@ public class CustomerServiceImpl implements CustomerService {
         if(customer == null)
             customer = customerMapper.fromCustomerDTO(customerDTO);
         Customer saveCustomer = customerRepository.save(customer);
+        kafkaProducerService.sendMessage("customer-topic","Customer created ===> "+ saveCustomer.getFirstName());
         return customerMapper.fromCustomer(saveCustomer);
     }
 

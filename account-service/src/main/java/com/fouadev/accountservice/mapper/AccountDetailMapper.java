@@ -53,7 +53,7 @@ public class AccountDetailMapper {
                 .amount(transactionDTO.getAmount())
                 .transactionType(transactionDTO.getTransactionType())
                 .transactionDate(transactionDTO.getTransactionDate())
-                //.accountDetail(transactionDTO.getAccountDetail())
+                .accountDetail(transactionDTO.getAccountDetail())
                 .build();
     }
 
@@ -63,7 +63,7 @@ public class AccountDetailMapper {
                 .amount(transaction.getAmount())
                 .transactionType(transaction.getTransactionType())
                 .transactionDate(transaction.getTransactionDate())
-                //.accountDetail(transaction.getAccountDetail())
+                .accountDetail(transaction.getAccountDetail())
                 .build();
     }
 

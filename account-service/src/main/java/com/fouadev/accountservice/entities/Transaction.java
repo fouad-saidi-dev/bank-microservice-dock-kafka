@@ -25,6 +25,6 @@ public class Transaction {
     private Double amount;
     private TransactionType transactionType;
     private LocalDateTime transactionDate;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private AccountDetail accountDetail;
 }
