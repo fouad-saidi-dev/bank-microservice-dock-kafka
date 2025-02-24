@@ -2,13 +2,15 @@ package com.fouadev.customerservice.services.impl;
 
 import com.fouadev.customerservice.dto.CustomerDTO;
 import com.fouadev.customerservice.entities.Customer;
+import com.fouadev.customerservice.event.CustomerEvent;
 import com.fouadev.customerservice.mapper.CustomerMapper;
 import com.fouadev.customerservice.repositories.CustomerRepository;
 import com.fouadev.customerservice.services.CustomerService;
-import com.fouadev.customerservice.services.KafkaProducerService;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -17,12 +19,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     private CustomerMapper customerMapper;
     private CustomerRepository customerRepository;
-    private KafkaProducerService kafkaProducerService;
+    private StreamBridge streamBridge;
 
-    public CustomerServiceImpl(CustomerMapper customerMapper, CustomerRepository customerRepository, KafkaProducerService kafkaProducerService) {
+    public CustomerServiceImpl(CustomerMapper customerMapper, CustomerRepository customerRepository, StreamBridge streamBridge) {
         this.customerMapper = customerMapper;
         this.customerRepository = customerRepository;
-        this.kafkaProducerService = kafkaProducerService;
+        this.streamBridge = streamBridge;
     }
     @Override
     public CustomerDTO addCustomer(CustomerDTO customerDTO) {
@@ -30,7 +32,9 @@ public class CustomerServiceImpl implements CustomerService {
         if(customer == null)
             customer = customerMapper.fromCustomerDTO(customerDTO);
         Customer saveCustomer = customerRepository.save(customer);
-        kafkaProducerService.sendMessage("customer-topic","Customer created ===> "+ saveCustomer.getFirstName());
+        CustomerEvent pageEvent = new CustomerEvent(customer.getFirstName(), customer.getEmail(), new Date(), 0L);
+        streamBridge.send("customer-topic", pageEvent);
+
         return customerMapper.fromCustomer(saveCustomer);
     }
 
