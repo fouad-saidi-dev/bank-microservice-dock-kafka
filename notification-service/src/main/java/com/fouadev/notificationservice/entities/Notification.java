@@ -5,6 +5,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /*
  Created by : Fouad SAIDI on 06/02/2025
@@ -24,6 +29,7 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String title;
-    private String content;
+    private String message;
+    @CreationTimestamp
+    private LocalDateTime timestamp;
 }

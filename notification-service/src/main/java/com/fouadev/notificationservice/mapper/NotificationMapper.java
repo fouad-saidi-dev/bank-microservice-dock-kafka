@@ -14,15 +14,15 @@ import org.springframework.stereotype.Component;
 public class NotificationMapper {
     public NotificationDTO fromNotification(Notification notification) {
         return NotificationDTO.builder()
-                .title(notification.getTitle())
-                .content(notification.getContent())
+                .message(notification.getMessage())
+                .timestamp(notification.getTimestamp())
                 .build();
     }
 
     public Notification fromNotificationDTO(NotificationDTO notificationDTO) {
         return Notification.builder()
-                .title(notificationDTO.title())
-                .content(notificationDTO.content())
+                .message(notificationDTO.message())
+                .timestamp(notificationDTO.timestamp())
                 .build();
     }
 }
