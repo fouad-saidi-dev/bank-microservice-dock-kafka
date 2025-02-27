@@ -3,7 +3,9 @@ package com.fouadev.customerservice.services.impl;
 import com.fouadev.customerservice.dto.CustomerDTO;
 import com.fouadev.customerservice.entities.Customer;
 import com.fouadev.customerservice.event.CustomerEvent;
+import com.fouadev.customerservice.event.EventType;
 import com.fouadev.customerservice.mapper.CustomerMapper;
+import com.fouadev.customerservice.repositories.CustomerEventRepo;
 import com.fouadev.customerservice.repositories.CustomerRepository;
 import com.fouadev.customerservice.services.CustomerService;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -20,20 +22,35 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerMapper customerMapper;
     private CustomerRepository customerRepository;
     private StreamBridge streamBridge;
+    private CustomerEventRepo customerEventRepo;
 
-    public CustomerServiceImpl(CustomerMapper customerMapper, CustomerRepository customerRepository, StreamBridge streamBridge) {
+    public CustomerServiceImpl(CustomerMapper customerMapper, CustomerRepository customerRepository, StreamBridge streamBridge, CustomerEventRepo customerEventRepo) {
         this.customerMapper = customerMapper;
         this.customerRepository = customerRepository;
         this.streamBridge = streamBridge;
+        this.customerEventRepo = customerEventRepo;
     }
+
     @Override
     public CustomerDTO addCustomer(CustomerDTO customerDTO) {
         Customer customer = customerRepository.findByEmail(customerDTO.getEmail());
-        if(customer == null)
+        if (customer == null)
             customer = customerMapper.fromCustomerDTO(customerDTO);
+
         Customer saveCustomer = customerRepository.save(customer);
-        CustomerEvent pageEvent = new CustomerEvent(customer.getFirstName(), customer.getEmail(), new Date(), 0L);
-        streamBridge.send("customer-topic", pageEvent);
+
+        CustomerEvent pageEvent = CustomerEvent.builder()
+                .name(customer.getFirstName() + " " + customer.getLastName())
+                .email(customer.getEmail())
+                .type(EventType.CREATED)
+                .date(new Date())
+                .duration(0L)
+                .sent(false)
+                .build();
+
+        //streamBridge.send("customer-topic", pageEvent);
+
+        customerEventRepo.save(pageEvent);
 
         return customerMapper.fromCustomer(saveCustomer);
     }
@@ -56,7 +73,17 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer updateCustomer = customerRepository.save(customer);
 
+        CustomerEvent pageEvent = CustomerEvent.builder()
+                .name(customer.getFirstName() + " " + customer.getLastName())
+                .email(customer.getEmail())
+                .type(EventType.UPDATED)
+                .date(new Date())
+                .duration(0L)
+                .build();
 
+//        streamBridge.send("customer-topic", pageEvent);
+
+        customerEventRepo.save(pageEvent);
         return customerMapper.fromCustomer(customerRepository.save(updateCustomer));
     }
 
@@ -68,6 +95,20 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteCustomer(Long id) {
+        Customer customer = customerRepository.findById(id).get();
+
+        CustomerEvent pageEvent = CustomerEvent.builder()
+                .name(customer.getFirstName() + " " + customer.getLastName())
+                .email(customer.getEmail())
+                .type(EventType.DELETED)
+                .date(new Date())
+                .duration(0L)
+                .build();
+
+//        streamBridge.send("customer-topic", pageEvent);
+
+        customerEventRepo.save(pageEvent);
+
         customerRepository.deleteById(id);
     }
 }

@@ -10,7 +10,7 @@
     <ul class="list-group">
         <li th:each="notification : ${notifications}">
             <span th:text="${notification.message}"></span> -
-            <span th:text="${notification.timestamp}"></span>
+            <span th:text="${notification.timestamp.toLocalDate()}"></span>
         </li>
     </ul>
 </div>

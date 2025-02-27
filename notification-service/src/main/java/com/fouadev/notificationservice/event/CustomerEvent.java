@@ -6,5 +6,5 @@ package com.fouadev.notificationservice.event;
  @project : bank-microservice-kafka
 */
 
-public record CustomerEvent(String name, String email) {
+public record CustomerEvent(String id,String name, String email,EventType type) {
 }

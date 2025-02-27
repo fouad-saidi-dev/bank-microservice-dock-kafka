@@ -29,7 +29,11 @@ public class NotificationHandler {
     public Consumer<CustomerEvent> customerEventConsumer() {
         System.out.println("NotificationHandler bean created");
         return (event) -> {
-            String message = "Notification envoyée à l'utilisateur pour le client : " + event.name();
+            if (notificationRespo.existsByEventId(event.id())) {
+                System.out.println("Event déjà traité : " + event.id());
+                return;
+            }
+            String message = "Customer "+event.type()+" : "+event.name();
             notifications.add(message);
             System.out.println(message);
             Notification notification = Notification

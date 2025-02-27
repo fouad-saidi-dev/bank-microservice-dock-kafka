@@ -36,4 +36,9 @@ public class CustomerControllerRest {
     public List<CustomerDTO> getAllCustomers() {
         return customerService.getAllCustomers();
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+    }
 }

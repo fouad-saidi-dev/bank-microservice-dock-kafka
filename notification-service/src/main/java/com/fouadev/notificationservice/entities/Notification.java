@@ -6,7 +6,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedBy;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -30,6 +29,7 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String message;
+    private String eventId;
     @CreationTimestamp
     private LocalDateTime timestamp;
 }
