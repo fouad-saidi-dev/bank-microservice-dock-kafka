@@ -29,7 +29,7 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String message;
-    private String eventId;
+    private Long eventId;
     @CreationTimestamp
     private LocalDateTime timestamp;
 }

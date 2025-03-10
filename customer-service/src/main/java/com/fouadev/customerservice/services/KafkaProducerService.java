@@ -1,5 +1,6 @@
 package com.fouadev.customerservice.services;
 
+import com.fouadev.customerservice.event.CustomerEvent;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class KafkaProducerService {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, CustomerEvent> kafkaTemplate;
 
-    public KafkaProducerService(KafkaTemplate<String, Object> kafkaTemplate) {
+    public KafkaProducerService(KafkaTemplate<String, CustomerEvent> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendMessage(String topic, Object message){
-        kafkaTemplate.send(topic, message);
+    public void sendMessage(CustomerEvent event){
+        System.out.println("Sent event : " + event.getName());
+        kafkaTemplate.send("customers-topic", event);
     }
 }

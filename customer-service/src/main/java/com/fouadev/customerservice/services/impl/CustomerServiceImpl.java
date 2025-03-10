@@ -8,10 +8,13 @@ import com.fouadev.customerservice.mapper.CustomerMapper;
 import com.fouadev.customerservice.repositories.CustomerEventRepo;
 import com.fouadev.customerservice.repositories.CustomerRepository;
 import com.fouadev.customerservice.services.CustomerService;
+import com.fouadev.customerservice.services.KafkaProducerService;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -23,12 +26,14 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository customerRepository;
     private StreamBridge streamBridge;
     private CustomerEventRepo customerEventRepo;
+    private KafkaProducerService kafkaProducerService;
 
-    public CustomerServiceImpl(CustomerMapper customerMapper, CustomerRepository customerRepository, StreamBridge streamBridge, CustomerEventRepo customerEventRepo) {
+    public CustomerServiceImpl(CustomerMapper customerMapper, CustomerRepository customerRepository, StreamBridge streamBridge, CustomerEventRepo customerEventRepo, KafkaProducerService kafkaProducerService) {
         this.customerMapper = customerMapper;
         this.customerRepository = customerRepository;
         this.streamBridge = streamBridge;
         this.customerEventRepo = customerEventRepo;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     @Override
@@ -43,13 +48,10 @@ public class CustomerServiceImpl implements CustomerService {
                 .name(customer.getFirstName() + " " + customer.getLastName())
                 .email(customer.getEmail())
                 .type(EventType.CREATED)
-                .date(new Date())
                 .duration(0L)
-                .sent(false)
                 .build();
 
-        //streamBridge.send("customer-topic", pageEvent);
-
+        kafkaProducerService.sendMessage(pageEvent);
         customerEventRepo.save(pageEvent);
 
         return customerMapper.fromCustomer(saveCustomer);
@@ -77,12 +79,11 @@ public class CustomerServiceImpl implements CustomerService {
                 .name(customer.getFirstName() + " " + customer.getLastName())
                 .email(customer.getEmail())
                 .type(EventType.UPDATED)
-                .date(new Date())
                 .duration(0L)
                 .build();
 
-//        streamBridge.send("customer-topic", pageEvent);
 
+        kafkaProducerService.sendMessage(pageEvent);
         customerEventRepo.save(pageEvent);
         return customerMapper.fromCustomer(customerRepository.save(updateCustomer));
     }
@@ -101,12 +102,12 @@ public class CustomerServiceImpl implements CustomerService {
                 .name(customer.getFirstName() + " " + customer.getLastName())
                 .email(customer.getEmail())
                 .type(EventType.DELETED)
-                .date(new Date())
                 .duration(0L)
                 .build();
 
 //        streamBridge.send("customer-topic", pageEvent);
 
+        kafkaProducerService.sendMessage(pageEvent);
         customerEventRepo.save(pageEvent);
 
         customerRepository.deleteById(id);

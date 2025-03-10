@@ -1,7 +1,8 @@
 package com.fouadev.notificationservice.web;
 
 
-import com.fouadev.notificationservice.event.NotificationHandler;
+
+import com.fouadev.notificationservice.services.KafkaConsumerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,15 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("notifications")
 public class NotificationRestController {
 
-    private NotificationHandler notificationHandler;
+    private KafkaConsumerService kafkaConsumerService;
 
-    public NotificationRestController(NotificationHandler notificationHandler) {
-        this.notificationHandler = notificationHandler;
+    public NotificationRestController(
+            KafkaConsumerService kafkaConsumerService) {
+        this.kafkaConsumerService = kafkaConsumerService;
     }
 
     @GetMapping("")
     public String getNotifications(Model model) {
-        model.addAttribute("notifications", notificationHandler.getNotifications());
+        model.addAttribute("notifications", kafkaConsumerService.getNotifications());
         return "notifications";
     }
 

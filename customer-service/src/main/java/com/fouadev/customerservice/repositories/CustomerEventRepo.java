@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CustomerEventRepo extends JpaRepository<CustomerEvent, Long> {
-    List<CustomerEvent> findBySentFalse();
+    //List<CustomerEvent> findBySentFalse();
 }

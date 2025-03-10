@@ -1,4 +1,4 @@
-package com.fouadev.notificationservice.event;
+package com.fouadev.customerservice.event;
 
 public enum EventType {
     CREATED, UPDATED , DELETED
