@@ -16,6 +16,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @SpringBootApplication
 @EnableFeignClients
@@ -36,6 +37,7 @@ public class AccountServiceApplication {
 				AccountDetailDTO accountDetailDTO = AccountDetailDTO.builder()
 						.customerId(customer.getId())
 						.accountType(AccountType.SAVINGS)
+						.accountNumber(String.valueOf((int)(Math.random()*1000)))
 						.balance(123.0)
 						.build();
 				AccountDetailDTO savedAccountDetailDTO = accountDetailService.addAccountDetail(accountDetailDTO);

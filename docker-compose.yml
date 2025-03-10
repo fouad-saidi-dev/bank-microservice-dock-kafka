@@ -22,3 +22,44 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  customer-db-postgres:
+    image: postgres:latest
+    container_name: customer-db-postgres
+    environment:
+      POSTGRES_DB: customer-db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_customer:/var/lib/postgresql/data
+
+  account-db-postgres:
+    image: postgres:latest
+    container_name: account-db-postgres
+    environment:
+      POSTGRES_DB: account-db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data_account:/var/lib/postgresql/data
+
+  notification-db-postgres:
+    image: postgres:latest
+    container_name: notification-db-postgres
+    environment:
+      POSTGRES_DB: notification-db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data_notification:/var/lib/postgresql/data
+
+volumes:
+  postgres_data_account:
+  postgres_data_customer:
+  postgres_data_notification:

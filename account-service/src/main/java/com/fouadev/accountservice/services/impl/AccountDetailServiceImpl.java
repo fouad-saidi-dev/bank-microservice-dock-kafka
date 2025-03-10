@@ -9,10 +9,13 @@ package com.fouadev.accountservice.services.impl;
 import com.fouadev.accountservice.clients.CustomerRestClient;
 import com.fouadev.accountservice.dto.AccountDetailDTO;
 import com.fouadev.accountservice.entities.AccountDetail;
+import com.fouadev.accountservice.event.AccountEvent;
+import com.fouadev.accountservice.event.EventType;
 import com.fouadev.accountservice.mapper.AccountDetailMapper;
 import com.fouadev.accountservice.model.Customer;
 import com.fouadev.accountservice.repositories.AccountDetailRepo;
 import com.fouadev.accountservice.services.AccountDetailService;
+import com.fouadev.accountservice.services.KafkaProducerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +26,13 @@ public class AccountDetailServiceImpl implements AccountDetailService {
     private AccountDetailMapper accountDetailMapper;
     private CustomerRestClient customerRestClient;
     private AccountDetailRepo accountDetailRepo;
+    private KafkaProducerService producerService;
 
-    public AccountDetailServiceImpl(AccountDetailMapper accountDetailMapper, CustomerRestClient customerRestClient, AccountDetailRepo accountDetailRepo) {
+    public AccountDetailServiceImpl(AccountDetailMapper accountDetailMapper, CustomerRestClient customerRestClient, AccountDetailRepo accountDetailRepo, KafkaProducerService producerService) {
         this.accountDetailMapper = accountDetailMapper;
         this.customerRestClient = customerRestClient;
         this.accountDetailRepo = accountDetailRepo;
+        this.producerService = producerService;
     }
     @Override
     public AccountDetailDTO addAccountDetail(AccountDetailDTO accountDetailDTO) {
@@ -41,6 +46,15 @@ public class AccountDetailServiceImpl implements AccountDetailService {
         AccountDetail saveAccountDetail = accountDetailRepo.save(accountDetail);
 
         System.out.println("account id ====>> "+saveAccountDetail.getId());
+
+        AccountEvent accountEvent = new AccountEvent(
+                saveAccountDetail.getAccountNumber(),
+                saveAccountDetail.getAccountType(),
+                saveAccountDetail.getBalance(),
+                EventType.CREATED
+        );
+
+        producerService.sendAccountMessage(accountEvent);
 
         return accountDetailMapper.toAccountDetailDTO(saveAccountDetail);
     }
@@ -62,6 +76,16 @@ public class AccountDetailServiceImpl implements AccountDetailService {
         accountDetail.setCustomerId(accountDetailDTO.getCustomerId());
 
         AccountDetail updateAccountDetail = accountDetailRepo.save(accountDetail);
+
+        AccountEvent accountEvent = new AccountEvent(
+                updateAccountDetail.getAccountNumber(),
+                updateAccountDetail.getAccountType(),
+                updateAccountDetail.getBalance(),
+                EventType.UPDATED
+        );
+
+        producerService.sendAccountMessage(accountEvent);
+
         return accountDetailMapper.toAccountDetailDTO(updateAccountDetail);
     }
 
