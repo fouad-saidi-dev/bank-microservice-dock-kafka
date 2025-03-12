@@ -3,6 +3,7 @@ package com.fouadev.reportservice.reports;
 
 import com.fouadev.reportservice.model.AccountDetail;
 import com.fouadev.reportservice.model.Customer;
+import com.fouadev.reportservice.model.Transaction;
 import com.fouadev.reportservice.openfeign.AccountClient;
 import com.fouadev.reportservice.openfeign.CustomerClient;
 import lombok.extern.slf4j.Slf4j;
@@ -117,11 +118,13 @@ public class ReportService {
 
             List<AccountDetail> accountDetails = accountClient.findAllAccounts();
             List<Customer> customers = customerClient.findAllCustomers();
+            List<Transaction> transactions = accountClient.findAllTransactions();
 
             JRBeanCollectionDataSource dataSource = switch (type) {
                 case "customers" -> new JRBeanCollectionDataSource(customers);
                 case "accounts" -> new JRBeanCollectionDataSource(accountDetails);
-                default -> null;
+                case "transactions" -> new JRBeanCollectionDataSource(transactions);
+                default -> throw new IllegalArgumentException("Invalid report type: " + type);
             };
 
 

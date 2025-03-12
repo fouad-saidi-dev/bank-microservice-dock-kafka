@@ -21,10 +21,10 @@ public class ReportRestController {
         this.reportService = reportService;
     }
 
-    @GetMapping("/customers")
-    public String generateFile(){
-        return reportService.generateCustomerReport();
-    }
+//    @GetMapping("/customers")
+//    public String generateFile(){
+//        return reportService.generateCustomerReport();
+//    }
 
     @GetMapping("")
     public String generateFile(@RequestParam("type") String type){
