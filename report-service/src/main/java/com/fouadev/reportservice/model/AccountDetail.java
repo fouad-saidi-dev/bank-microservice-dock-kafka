@@ -23,4 +23,8 @@ public class AccountDetail {
     private AccountType accountType;
     private Double balance;
     private Customer customer;
+
+    public String getCustomerName(){
+        return customer.getFirstName()+" "+customer.getLastName();
+    }
 }

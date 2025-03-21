@@ -13,7 +13,7 @@
     <field name="id" class="java.lang.String"/>
     <field name="accountNumber" class="java.lang.String"/>
     <field name="accountType" class="com.fouadev.reportservice.enums.AccountType"/>
-<!--    <field name="customer.name" class="java.lang.String"/>-->
+    <field name="customerName" class="java.lang.String"/>
 
     <title>
         <band height="50">
@@ -45,11 +45,11 @@
                 <textElement textAlignment="Center"/>
                 <text><![CDATA[Account Type]]></text>
             </staticText>
-<!--            <staticText>-->
-<!--                <reportElement x="400" y="0" width="135" height="20"/>-->
-<!--                <textElement textAlignment="Center"/>-->
-<!--                <text><![CDATA[Customer Name]]></text>-->
-<!--            </staticText>-->
+            <staticText>
+                <reportElement x="400" y="0" width="135" height="20"/>
+                <textElement textAlignment="Center"/>
+                <text><![CDATA[Customer Name]]></text>
+            </staticText>
         </band>
     </columnHeader>
 
@@ -70,11 +70,11 @@
                 <textElement textAlignment="Center"/>
                 <textFieldExpression><![CDATA[$F{accountType}]]></textFieldExpression>
             </textField>
-<!--            <textField>-->
-<!--                <reportElement x="400" y="0" width="135" height="20"/>-->
-<!--                <textElement textAlignment="Center"/>-->
-<!--                <textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>-->
-<!--            </textField>-->
+            <textField>
+                <reportElement x="400" y="0" width="135" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{customerName}]]></textFieldExpression>
+            </textField>
         </band>
     </detail>
 
