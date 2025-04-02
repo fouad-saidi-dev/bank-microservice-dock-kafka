@@ -18,3 +18,13 @@ spring:
           uri: lb://NOTIFICATION-SERVICE
           predicates:
             - Path=/notifications/**
+#      globalcors:
+#        corsConfigurations:
+#          '[/**]':
+#            allowedOrigins: "*"
+#            allowedHeaders: "*"
+#            allowedMethods:
+#              - GET
+#              - POST
+#              - PUT
+#              - DELETE

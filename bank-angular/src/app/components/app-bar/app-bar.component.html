@@ -1,1 +1,45 @@
-<p>app-bar works!</p>
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="myDrawer.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span style="flex:auto">BANK SERVICE</span>
+  <button mat-button routerLink="#">Home</button>
+
+  <button mat-raised-button color="accent" (click)="handleLogin()" >Login</button>
+  <button mat-raised-button color="accent" (click)="handleLogout()" >Logout</button>
+
+  <button mat-icon-button [matBadge]="notificationCount" matBadgeColor="accent">
+    <mat-icon>notifications</mat-icon>
+  </button>
+</mat-toolbar>
+<mat-drawer-container>
+  <mat-drawer #myDrawer opened="true" mode="side" position="start">
+    <mat-list>
+      <mat-list-item>
+        <button mat-button routerLink="/admin/customers">
+          <mat-icon>group</mat-icon>
+          Customers
+        </button>
+      </mat-list-item>
+
+      <mat-list-item>
+        <button mat-button routerLink="/admin/accounts">
+          <mat-icon>account_balance</mat-icon>
+          Accounts
+        </button>
+      </mat-list-item>
+
+      <mat-list-item>
+        <button mat-button routerLink="/admin/transactions">
+          <mat-icon>monetization_on</mat-icon>
+          Transactions
+        </button>
+      </mat-list-item>
+    </mat-list>
+  </mat-drawer>
+  <mat-drawer-content>
+    <div style="min-height: 600px">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>

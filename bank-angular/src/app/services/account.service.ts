@@ -1,9 +1,34 @@
 import { Injectable } from '@angular/core';
+import {HttpClient} from "@angular/common/http";
+import {Observable} from "rxjs";
+import {environment} from "../../environments/environment.development";
+import {Account} from "../models/account.model";
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
+
+  public getAccounts():Observable<Array<Account>> {
+    return this.http.get<Array<Account>>(`${environment.baseUrl}/account-service/accounts`);
+  }
+
+  public getAccount(id:number):Observable<Account> {
+    return this.http.get<Account>(`${environment.baseUrl}/account-service/accounts/${id}`);
+  }
+
+  public createAccount(account:Account):Observable<Account> {
+    return this.http.post<Account>(`${environment.baseUrl}/account-service/accounts`, account);
+  }
+
+  public updateAccount(account:Account):Observable<Account> {
+    return this.http.put<Account>(`${environment.baseUrl}/account-service/accounts/${account.id}`, account);
+  }
+
+  public deleteAccount(id:number):Observable<void> {
+    return this.http.delete<void>(`${environment.baseUrl}/account-service/accounts/${id}`);
+  }
 }
