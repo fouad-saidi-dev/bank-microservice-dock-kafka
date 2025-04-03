@@ -4,6 +4,7 @@ import {Router} from "@angular/router";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {MatTableDataSource} from "@angular/material/table";
+import {KeycloakService} from "keycloak-angular";
 
 @Component({
   selector: 'app-list-accounts',
@@ -14,10 +15,11 @@ export class ListAccountsComponent implements OnInit{
 
   public accounts: any;
   public dataSource!: any;
-  public displayedColumns: string[] = ['accountNumber', 'accountType', 'balance','customerName','transactions'];
+  public displayedColumns: string[] = ['accountNumber', 'accountType', 'balance','customerName','transactions','actions'];
 
   constructor(private accountService:AccountService,
-              private router:Router) {
+              private router:Router,
+              public keycloakService:KeycloakService) {
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

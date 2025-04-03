@@ -16,7 +16,7 @@ export class AccountService {
     return this.http.get<Array<Account>>(`${environment.baseUrl}/account-service/accounts`);
   }
 
-  public getAccount(id:number):Observable<Account> {
+  public getAccount(id:string):Observable<Account> {
     return this.http.get<Account>(`${environment.baseUrl}/account-service/accounts/${id}`);
   }
 
@@ -24,11 +24,11 @@ export class AccountService {
     return this.http.post<Account>(`${environment.baseUrl}/account-service/accounts`, account);
   }
 
-  public updateAccount(account:Account):Observable<Account> {
-    return this.http.put<Account>(`${environment.baseUrl}/account-service/accounts/${account.id}`, account);
+  public updateAccount(account:Account,id:string):Observable<Account> {
+    return this.http.put<Account>(`${environment.baseUrl}/account-service/accounts/${id}`, account);
   }
 
-  public deleteAccount(id:number):Observable<void> {
+  public deleteAccount(id:string):Observable<void> {
     return this.http.delete<void>(`${environment.baseUrl}/account-service/accounts/${id}`);
   }
 }

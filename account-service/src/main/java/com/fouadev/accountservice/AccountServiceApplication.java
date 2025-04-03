@@ -37,7 +37,7 @@ public class AccountServiceApplication {
 				AccountDetailDTO accountDetailDTO = AccountDetailDTO.builder()
 						.customerId(customer.getId())
 						.accountType(AccountType.SAVINGS)
-						.accountNumber(String.valueOf((int)(Math.random()*1000)))
+						.accountNumber(String.valueOf((int)(Math.random()*1_000_000_000_000_000L)))
 						.balance(123.0)
 						.build();
 				AccountDetailDTO savedAccountDetailDTO = accountDetailService.addAccountDetail(accountDetailDTO);

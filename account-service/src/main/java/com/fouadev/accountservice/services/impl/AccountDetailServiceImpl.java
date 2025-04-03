@@ -41,7 +41,8 @@ public class AccountDetailServiceImpl implements AccountDetailService {
         if (accountDetail == null)
             accountDetail = accountDetailMapper.toAccountDetail(accountDetailDTO);
 
-        accountDetail.setCustomerId(1L);
+        accountDetail.setCustomerId(accountDetailDTO.getCustomerId());
+        accountDetail.setAccountNumber(String.valueOf((int)(Math.random()*1_000_000_000_000_000L)));
 
         AccountDetail saveAccountDetail = accountDetailRepo.save(accountDetail);
 

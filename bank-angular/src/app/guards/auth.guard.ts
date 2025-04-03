@@ -37,8 +37,8 @@ export class AuthGuard extends KeycloakAuthGuard {
     // Check for required roles (if any)
     const requiredRoles = route.data['roles'] || [];
     if (!this.hasRequiredRoles(requiredRoles)) {
-      // Redirect if roles don't match
-      return false;
+      return this.router.parseUrl('/unauthorized');
+      //return false;
     }
 
     return true;

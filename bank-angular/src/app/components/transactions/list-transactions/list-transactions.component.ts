@@ -4,6 +4,7 @@ import {Router} from "@angular/router";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {MatTableDataSource} from "@angular/material/table";
+import {KeycloakService} from "keycloak-angular";
 
 @Component({
   selector: 'app-list-transactions',
@@ -14,9 +15,10 @@ export class ListTransactionsComponent implements OnInit{
 
   public transactions: any;
   public dataSource!: any;
-  public displayedColumns: string[] = ['id', 'amount', 'transactionType','transactionDate'];
+  public displayedColumns: string[] = ['id', 'amount', 'transactionType','transactionDate','actions'];
 
-  constructor(private transactionService:TransactionService,private route:Router) {
+  constructor(private transactionService:TransactionService,private route:Router,
+              public keycloakService:KeycloakService) {
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -40,11 +42,11 @@ export class ListTransactionsComponent implements OnInit{
     })
   }
 
-  editCustomer(id:number) {
+  editTrx(id:number) {
     this.route.navigateByUrl(`/edit-customer/${id}`);
   }
 
-  deleteCustomer(id:number) {
+  deleteTrx(id:number) {
     this.transactionService.deleteTransaction(id).subscribe({
       next: (data) => {
         console.log(data);

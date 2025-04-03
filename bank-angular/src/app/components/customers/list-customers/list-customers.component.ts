@@ -4,6 +4,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {MatTableDataSource} from "@angular/material/table";
 import {CustomerService} from "../../../services/customer.service";
+import {KeycloakService} from "keycloak-angular";
 
 @Component({
   selector: 'app-list-customers',
@@ -13,10 +14,11 @@ import {CustomerService} from "../../../services/customer.service";
 export class ListCustomersComponent implements OnInit{
   public customers: any;
   public dataSource!: any;
-  public displayedColumns: string[] = ['id', 'firstName', 'lastName','email'];
+  public displayedColumns: string[] = ['id', 'firstName', 'lastName','email','actions'];
 
   constructor(private customerService:CustomerService,
-              private router:Router) {
+              private router:Router,
+              public keycloakService:KeycloakService) {
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -41,7 +43,7 @@ export class ListCustomersComponent implements OnInit{
   }
 
   editCustomer(id:number) {
-    this.router.navigateByUrl(`/edit-customer/${id}`);
+    this.router.navigateByUrl(`/admin/edit-customer/${id}`);
   }
 
   deleteCustomer(id:number) {

@@ -1,12 +1,12 @@
 
 <div class="container">
-  <mat-toolbar>
-    <button mat-raised-button color="primary" routerLink="/admin/add-customer">Add Customer</button>
+  <mat-toolbar  *ngIf="keycloakService.getUserRoles().includes('ADMIN')">
+    <button mat-raised-button color="primary" routerLink="/admin/add-transaction">Add Transaction</button>
   </mat-toolbar>
   <mat-card>
     <mat-card-header>
       <mat-card-title>
-        Customers
+        Transactions
       </mat-card-title>
     </mat-card-header>
     <mat-divider></mat-divider>
@@ -43,10 +43,10 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Actions</th>
           <td mat-cell *matCellDef="let element">
-            <button mat-icon-button color="primary" (click)="editCustomer(element.id)">
+            <button mat-icon-button color="primary" (click)="editTrx(element.id)">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button color="warn" (click)="deleteCustomer(element.id)">
+            <button mat-icon-button color="warn" (click)="deleteTrx(element.id)">
               <mat-icon>delete</mat-icon>
             </button>
             <!--            <button mat-icon-button color="primary"-->

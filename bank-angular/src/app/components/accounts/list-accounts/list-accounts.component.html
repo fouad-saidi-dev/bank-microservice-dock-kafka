@@ -1,5 +1,5 @@
 <div class="container">
-  <mat-toolbar>
+  <mat-toolbar *ngIf="keycloakService.getUserRoles().includes('ADMIN')">
     <button mat-raised-button color="primary" routerLink="/admin/add-account">Add Account</button>
   </mat-toolbar>
   <mat-card>

@@ -24,7 +24,7 @@ export class CustomerService {
   }
 
   public editCustomer(customer:Customer,id:number):Observable<Customer> {
-    return this.http.post<Customer>(`${environment.baseUrl}/customer-service/customers/${id}`,customer)
+    return this.http.put<Customer>(`${environment.baseUrl}/customer-service/customers/${id}`,customer)
   }
 
   public deleteCustomer(id:number):Observable<void>{
