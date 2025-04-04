@@ -5,6 +5,8 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {MatTableDataSource} from "@angular/material/table";
 import {KeycloakService} from "keycloak-angular";
+import {TransactionDialogComponent} from "../transaction-dialog/transaction-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-list-accounts',
@@ -19,7 +21,8 @@ export class ListAccountsComponent implements OnInit{
 
   constructor(private accountService:AccountService,
               private router:Router,
-              public keycloakService:KeycloakService) {
+              public keycloakService:KeycloakService,
+              private dialog:MatDialog) {
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -47,7 +50,7 @@ export class ListAccountsComponent implements OnInit{
      this.router.navigateByUrl(`/edit-account/${id}`);
   }
 
-  deleteAccount(id:number) {
+  deleteAccount(id:string) {
     this.accountService.deleteAccount(id).subscribe({
       next: (data) => {
         console.log(data);
@@ -59,5 +62,18 @@ export class ListAccountsComponent implements OnInit{
     })
   }
 
-  protected readonly length = length;
+  displayTrxDialog(trxList:any[]) {
+    console.log("Transfers",trxList)
+    this.dialog.open(TransactionDialogComponent, {
+      height: '400px',
+      width: '800px',
+      data : {
+        trxList,
+        // name,
+        // id,
+        // sourceRib
+      }
+    });
+  }
+
 }

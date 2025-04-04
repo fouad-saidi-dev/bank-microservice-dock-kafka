@@ -1,4 +1,4 @@
-<mat-card class="form-container" [formGroup]="customerForm">
+<mat-card class="form-container" [formGroup]="accountForm">
   <mat-card-header>
     <mat-card-title>
       {{ accountId != undefined ? "Edit" : "Add" }} Account
@@ -18,7 +18,7 @@
 
 
     <mat-form-field appearance="outline">
-      <mat-label>Beneficiary Type</mat-label>
+      <mat-label>Account Type</mat-label>
       <mat-select formControlName="accountType">
         <mat-option value="SAVINGS">SAVINGS</mat-option>
         <mat-option value="CHECKING">CHECKING</mat-option>

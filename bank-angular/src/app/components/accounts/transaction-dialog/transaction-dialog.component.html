@@ -1,0 +1,30 @@
+<h1 mat-dialog-title>Transfers of {{data.name}}</h1>
+<!--<mat-toolbar>-->
+<!--  <button mat-raised-button color="primary" (click)="goToTransfer(data.id)">Add Transfer</button>-->
+<!--</mat-toolbar>-->
+<div mat-dialog-content>
+  <table mat-table [dataSource]="data.trxList" class="mat-elevation-z8">
+
+<!--    <ng-container matColumnDef="id">-->
+<!--      <th mat-header-cell *matHeaderCellDef> ID </th>-->
+<!--      <td mat-cell *matCellDef="let element"> {{ element.id }} </td>-->
+<!--    </ng-container>-->
+    <ng-container matColumnDef="amount">
+      <th mat-header-cell *matHeaderCellDef> amount </th>
+      <td mat-cell *matCellDef="let element"> {{ element.amount }} </td>
+    </ng-container>
+    <ng-container matColumnDef="transactionType">
+      <th mat-header-cell *matHeaderCellDef> Transaction Type </th>
+      <td mat-cell *matCellDef="let element"> {{ element.transactionType }} </td>
+    </ng-container>
+    <ng-container matColumnDef="transactionDate">
+      <th mat-header-cell *matHeaderCellDef> Transaction Date </th>
+      <td mat-cell *matCellDef="let element"> {{ element.transactionDate }} </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['amount', 'transactionType', 'transactionDate']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['amount', 'transactionType', 'transactionDate'];"></tr>
+  </table>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+</div>

@@ -35,6 +35,7 @@ import {KeycloakAngularModule, KeycloakService} from "keycloak-angular";
 import {BrowserAnimationsModule, NoopAnimationsModule} from "@angular/platform-browser/animations";
 import {MatBadge} from "@angular/material/badge";
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
+import { TransactionDialogComponent } from './components/accounts/transaction-dialog/transaction-dialog.component';
 
 
 function initializeKeycloak(keycloak: KeycloakService) {
@@ -63,7 +64,8 @@ function initializeKeycloak(keycloak: KeycloakService) {
     AppBarComponent,
     ListTransactionsComponent,
     AddTransactionComponent,
-    UnauthorizedComponent
+    UnauthorizedComponent,
+    TransactionDialogComponent
   ],
   imports: [
     BrowserModule,
