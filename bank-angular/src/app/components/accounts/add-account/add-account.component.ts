@@ -14,8 +14,10 @@ import {Account} from "../../../models/account.model";
 export class AddAccountComponent implements OnInit {
   accountForm!: FormGroup;
   accountId!:string;
+  customers:any;
   constructor(private formBuilder:FormBuilder,
               private accountService:AccountService,
+              private customerService:CustomerService,
               private activatedRoute:ActivatedRoute,
               private route:Router) {
   }
@@ -30,8 +32,19 @@ export class AddAccountComponent implements OnInit {
     this.accountForm = this.formBuilder.group({
       balance: this.formBuilder.control(''),
       accountType: this.formBuilder.control(''),
-      customer: this.formBuilder.control('')
+      customerId: this.formBuilder.control('')
     })
+
+    this.customerService.getCustomers().subscribe({
+      next:(data:Customer[]) => {
+        console.log("Customers",data)
+        this.customers=data;
+      },
+      error:err => {
+        console.error("Error => ",err)
+      }
+    })
+
   }
 
   getAccount():void{
@@ -41,7 +54,7 @@ export class AddAccountComponent implements OnInit {
         this.accountForm = this.formBuilder.group({
           balance: this.formBuilder.control(data.balance),
           accountType: this.formBuilder.control(data.accountType),
-          customer: this.formBuilder.control(data.customer)
+          customerId: this.formBuilder.control(data.customerId)
         })
       },
       error:(err)=>{

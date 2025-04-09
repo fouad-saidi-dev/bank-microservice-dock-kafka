@@ -10,7 +10,8 @@ import {NotificationService} from "../../services/notification.service";
 })
 export class AppBarComponent implements OnInit{
   public profile!:KeycloakProfile;
-  notificationCount: any;
+  notificationCount= 0;
+  notifications: any;
   constructor(public keycloakService:KeycloakService,private notificationService:NotificationService) {
   }
   ngOnInit(): void {
@@ -26,8 +27,9 @@ export class AppBarComponent implements OnInit{
   }
 
   countNotifications(){
-    this.notificationService.getNotifications().subscribe(count => {
-      this.notificationCount = count;
+    this.notificationService.getNotifications().subscribe(data => {
+      this.notifications=data
+      this.notificationCount = data.length;
     })
   }
 
