@@ -71,6 +71,18 @@ services:
     volumes:
       - postgres_data_keycloak:/var/lib/postgresql/data
 
+  auth-db-postgres:
+    image: postgres:latest
+    container_name: auth-db-postgres
+    environment:
+      POSTGRES_DB: user-db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5437:5432"
+    volumes:
+      - postgres_data_auth:/var/lib/postgresql/data
+
   keycloak-bank:
     image: quay.io/keycloak/keycloak:23.0.4
     container_name: keycloak-bank
@@ -92,3 +104,4 @@ volumes:
   postgres_data_customer:
   postgres_data_notification:
   postgres_data_keycloak:
+  postgres_data_auth:

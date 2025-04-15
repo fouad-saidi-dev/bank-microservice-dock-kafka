@@ -44,7 +44,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
       config: {
         url: 'http://localhost:9090',
         realm: 'bank-app',
-        clientId: 'bank-cloud-app',
+        clientId: 'bank-cloud-app-public',
       },
       initOptions: {
         onLoad: 'check-sso',
