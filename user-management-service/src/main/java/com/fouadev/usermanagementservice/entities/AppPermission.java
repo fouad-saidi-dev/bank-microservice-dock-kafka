@@ -1,6 +1,8 @@
 package com.fouadev.usermanagementservice.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 
@@ -18,6 +20,8 @@ import lombok.*;
 @Builder
 public class AppPermission {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String name;
+    private String description;
 }

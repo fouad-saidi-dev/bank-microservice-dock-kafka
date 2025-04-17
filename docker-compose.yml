@@ -99,6 +99,15 @@ services:
     ports:
       - "9090:9090"
 
+  bank-prometheus:
+    image: prom/prometheus
+    container_name: bank-prometheus
+    restart: unless-stopped
+    ports:
+      - "9091:9091"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
 volumes:
   postgres_data_account:
   postgres_data_customer:

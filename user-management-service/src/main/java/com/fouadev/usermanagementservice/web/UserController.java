@@ -1,9 +1,13 @@
 package com.fouadev.usermanagementservice.web;
 
+import com.fouadev.usermanagementservice.dto.AppPermissionDTO;
 import com.fouadev.usermanagementservice.dto.AppRoleDTO;
 import com.fouadev.usermanagementservice.dto.AppUserDTO;
+import com.fouadev.usermanagementservice.dto.AppUserResponseDTO;
 import com.fouadev.usermanagementservice.services.UserService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /*
  Created by : Fouad SAIDI on 15/04/2025
@@ -32,8 +36,18 @@ public class UserController {
         return userService.createUser(userDTO);
     }
 
+    @GetMapping("")
+    public List<AppUserResponseDTO> getUsers(){
+        return userService.getUsers();
+    }
+
     @PostMapping("/roles/createRole")
     public AppRoleDTO createUser(@RequestBody AppRoleDTO appRoleDTO){
         return userService.createRole(appRoleDTO);
+    }
+
+    @PostMapping("/permissions/createPermission")
+    public AppPermissionDTO createUser(@RequestBody AppPermissionDTO permissionDTO){
+        return userService.createPermission(permissionDTO);
     }
 }

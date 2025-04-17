@@ -1,10 +1,13 @@
 package com.fouadev.usermanagementservice.services.impl;
 
+import com.fouadev.usermanagementservice.dto.AppPermissionDTO;
 import com.fouadev.usermanagementservice.dto.AppRoleDTO;
 import com.fouadev.usermanagementservice.dto.AppUserDTO;
+import com.fouadev.usermanagementservice.dto.AppUserResponseDTO;
 import com.fouadev.usermanagementservice.entities.AppPermission;
 import com.fouadev.usermanagementservice.entities.AppRole;
 import com.fouadev.usermanagementservice.entities.AppUser;
+import com.fouadev.usermanagementservice.mapper.UserMapper;
 import com.fouadev.usermanagementservice.repositories.PermissionRepository;
 import com.fouadev.usermanagementservice.repositories.RoleRepository;
 import com.fouadev.usermanagementservice.repositories.UserRepository;
@@ -13,9 +16,12 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.keycloak.representations.idm.authorization.ResourceRepresentation;
+import org.keycloak.representations.idm.authorization.ScopeRepresentation;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,13 +46,15 @@ public class UserServiceImpl implements UserService {
     private Keycloak keycloak;
     private final String realm = "bank-app";
     private final PasswordEncoder passwordEncoder;
+    private UserMapper userMapper;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PermissionRepository permissionRepository, Keycloak keycloak, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PermissionRepository permissionRepository, Keycloak keycloak, PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
         this.keycloak = keycloak;
         this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -190,6 +198,58 @@ public class UserServiceImpl implements UserService {
 
         return AppRoleDTO.builder()
                 .name(appRole.getName())
+                .build();
+    }
+
+    @Override
+    public List<AppUserResponseDTO> getUsers() {
+
+        List<AppUser> appUsers = userRepository.findAll();
+
+        return appUsers.stream().map(userMapper::fromUserToUserDTO).toList();
+    }
+
+    @Override
+    public AppPermissionDTO createPermission(AppPermissionDTO appPermissionDTO) {
+
+        AppPermission appPermission = AppPermission.builder()
+                .name(appPermissionDTO.name())
+                .description(appPermissionDTO.description())
+                .build();
+
+        ClientRepresentation client = keycloak
+                .realm(realm)
+                .clients()
+                .findByClientId("bank-cloud-app")
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Client not found"));
+
+        String clientId = client.getId();
+
+        ResourceRepresentation resRep = new ResourceRepresentation();
+        resRep.setName(appPermissionDTO.name());
+        resRep.setDisplayName(appPermissionDTO.description());
+        resRep.setOwnerManagedAccess(true);
+        resRep.setScopes(Set.of(new ScopeRepresentation("default")));
+
+        Response response = keycloak
+                .realm(realm)
+                .clients()
+                .get(clientId)
+                .authorization()
+                .resources()
+                .create(resRep);
+
+        String body = response.readEntity(String.class);
+
+        log.info("Keycloak responded with status {} and body: {}", response.getStatus(), body);
+
+        permissionRepository.save(appPermission);
+
+        return AppPermissionDTO.builder()
+                .name(appPermission.getName())
+                .description(appPermission.getDescription())
                 .build();
     }
 }
