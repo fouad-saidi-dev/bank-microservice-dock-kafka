@@ -1,5 +1,6 @@
 package com.fouadev.usermanagementservice.web;
 
+import com.fouadev.usermanagementservice.dto.AppRoleDTO;
 import com.fouadev.usermanagementservice.dto.AppUserDTO;
 import com.fouadev.usermanagementservice.services.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -29,5 +30,10 @@ public class UserController {
     @PostMapping("/createUser")
     public AppUserDTO createUser(@RequestBody AppUserDTO userDTO){
         return userService.createUser(userDTO);
+    }
+
+    @PostMapping("/roles/createRole")
+    public AppRoleDTO createUser(@RequestBody AppRoleDTO appRoleDTO){
+        return userService.createRole(appRoleDTO);
     }
 }

@@ -1,6 +1,8 @@
 package com.fouadev.usermanagementservice.services.impl;
 
+import com.fouadev.usermanagementservice.dto.AppRoleDTO;
 import com.fouadev.usermanagementservice.dto.AppUserDTO;
+import com.fouadev.usermanagementservice.entities.AppPermission;
 import com.fouadev.usermanagementservice.entities.AppRole;
 import com.fouadev.usermanagementservice.entities.AppUser;
 import com.fouadev.usermanagementservice.repositories.PermissionRepository;
@@ -14,6 +16,7 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -36,12 +39,14 @@ public class UserServiceImpl implements UserService {
     private PermissionRepository permissionRepository;
     private Keycloak keycloak;
     private final String realm = "bank-app";
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PermissionRepository permissionRepository, Keycloak keycloak) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PermissionRepository permissionRepository, Keycloak keycloak, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
         this.keycloak = keycloak;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -57,7 +62,6 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userRep.getEmail());
             user.setFirstName(userRep.getFirstName());
             user.setLastName(userRep.getLastName());
-
 
             List<RoleRepresentation> realmRoles = keycloak.realm(realm)
                     .users().get(userRep.getId()).roles().realmLevel().listEffective();
@@ -75,18 +79,39 @@ public class UserServiceImpl implements UserService {
                             return roleRepository.save(newRole);
                         });
 
+//                if(roleRep.isComposite()){
+//                    Set<RoleRepresentation> compositeRoles = keycloak.realm(realm)
+//                            .roles().get(roleRep.getName()).getRoleComposites();
+//
+//                    compositeRoles.forEach(composite -> {
+//                        var perm = permissionRepository.findById(composite.getId())
+//                                .orElseGet(()->{
+//                                    var newPer = AppPermission.builder()
+//                                            .id(composite.getId())
+//                                            .name(composite.getName())
+//                                            .build();
+//                                    return permissionRepository.save(newPer);
+//                                });
+//
+//                        role.getPermissions().add(perm);
+//                    });
+//                }
+
                 userRoles.add(role);
             }
 
             user.setRoles(userRoles);
-
-
             userRepository.save(user);
         }
     }
 
     @Override
     public AppUserDTO createUser(AppUserDTO appUserDTO) {
+
+        if (!appUserDTO.getPassword().equals(appUserDTO.getConfirmPassword())) {
+            log.error("Password and confirm password do not match");
+            throw new IllegalArgumentException("Password and confirm password must match");
+        }
 
         // create user in keycloak
         UserRepresentation userRep = new UserRepresentation();
@@ -103,8 +128,11 @@ public class UserServiceImpl implements UserService {
         credentialRep.setValue(appUserDTO.getPassword());
         userRep.setCredentials(List.of(credentialRep));
 
+
         Response response = keycloak.realm(realm).users().create(userRep);
-        log.info("Response status: {}", response.getStatus());
+        //log.info("Response status: {}", response.getStatus());
+        String body = response.readEntity(String.class);
+        log.info("Keycloak responded with status {} and body: {}", response.getStatus(), body);
 
         if (response.getStatus() != 201) {
             //throw new RuntimeException("Failed to create user in keycloak");
@@ -120,6 +148,7 @@ public class UserServiceImpl implements UserService {
                 .firstName(appUserDTO.getFirstName())
                 .lastName(appUserDTO.getLastName())
                 .username(appUserDTO.getUsername())
+                .password(passwordEncoder.encode(appUserDTO.getPassword()))
                 .id(userId)
                 .roles(new HashSet<>())
                 .build();
@@ -134,5 +163,33 @@ public class UserServiceImpl implements UserService {
                 .username(user.getUsername())
                 .build();
 
+    }
+
+    @Override
+    public AppRoleDTO createRole(AppRoleDTO appRoleDTO) {
+
+        RoleRepresentation roleRep = new RoleRepresentation();
+        roleRep.setName(appRoleDTO.getName().toUpperCase());
+        roleRep.setDescription("Role ..");
+
+        RoleRepresentation existingRole = keycloak.realm(realm).roles().get(roleRep.getName()).toRepresentation();
+
+        try {
+            if (existingRole == null) keycloak.realm(realm).roles().create(roleRep);
+            log.info("Role '{}' created successfully", appRoleDTO.getName());
+        } catch (Exception e) {
+            log.error("Error creating role in Keycloak", e);
+            throw new RuntimeException("Error creating role: " + e.getMessage());
+        }
+
+        AppRole appRole = AppRole.builder()
+                .name(appRoleDTO.getName())
+                .build();
+
+        roleRepository.save(appRole);
+
+        return AppRoleDTO.builder()
+                .name(appRole.getName())
+                .build();
     }
 }

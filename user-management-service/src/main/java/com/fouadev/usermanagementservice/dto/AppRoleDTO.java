@@ -1,6 +1,10 @@
-package com.fouadev.usermanagementservice.entities;
+package com.fouadev.usermanagementservice.dto;
 
-import jakarta.persistence.*;
+import com.fouadev.usermanagementservice.entities.AppPermission;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import lombok.*;
 
 import java.util.Set;
@@ -11,18 +15,15 @@ import java.util.Set;
  @date : 15/04/2025
  @project : bank-microservice-kafka
 */
-@Entity(name = "roles")
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-public class AppRole {
+public class AppRoleDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String name;
-    @ManyToMany(fetch = FetchType.EAGER)
     private Set<AppPermission> permissions;
 }
